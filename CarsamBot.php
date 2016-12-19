@@ -1,66 +1,259 @@
 <?php #php codes begins here
 
-                   ini_set ('error_reporting', E_ALL);
+$page = $_SERVER['http://localhost/nexus/deploymessages.php'];
+$sec = "10"; 
+     //accepting variables from the text box on our site
+  //this feature is also used for manually sending messages to the intended user 
 
-                   $botToken = "278708135:AAGvYIWeIrAKBCZN6Ox0EUlzryPD6qeFYDM";
-                   $website = "https://api.telegram.org/bot".$botToken;
+ //saving the bot token into the variable $botToken
+$botToken = "278708135:AAGvYIWeIrAKBCZN6Ox0EUlzryPD6qeFYDM";
+//instantiating the url for telegram
+$website = "https://api.telegram.org/bot".$botToken;
 
-                   $update = file_get_contents($website."/getupdates");
-                   $updateArray = json_decode($update, TRUE);
 
-                   $chatId = end($updateArray['result'])["message"]["chat"]["id"];
-                   $clientName = end($updateArray['result'])['message']['chat']['first_name'];
-	                $message = end($updateArray['result'])['message']['text'];
+$update = file_get_contents($website."/getupdates");
+$update = json_decode($update, TRUE);
+//getting the last array locaton of the recieved message
+$current_update =end($update["result"]);
+//getting the chat id of the user
+$chatId = $current_update["message"]["chat"]["id"]; 
+//recieving input message from the user and saving it in a variable
+$newmessage=$current_update["message"]["text"];
 
-                   switch ($message) {
-                     case "/test":
-                       # code...
-                       file_get_contents($website."/sendMessage?chat_id=".$chatId."&text=test");
-                       break;
+$teleuser=$current_update["message"]["from"]["first_name"];
 
-                       case "/hi":
-                         # code...
-                         file_get_contents($website."/sendMessage?chat_id=".$chatId."&text=Hey there! Do you want to keep abreast with the security news around you. /yes to continue");
-                         break;
-                           
-                       case "/yes":
-                           file_get_contents($website."/sendMessage?chat_id=".$chatId."&text=Information Disclosure Flaws Patched in VMware Products
-                           VMware has published two security advisories on Tuesday to inform customers of patches that address information disclosure vulnerabilities in several of the company’s products.
+    $newsxz = '';
+    $link = 'https://newsapi.org/v1/articles?source=ars-technica&sortBy=top&apiKey=71742de1bb2b403f9d87d94444fd296d';
+    $feed = file_get_contents($link);
+    $feedjs = json_decode($feed,TRUE);
+    for($i=1;$i<=5;$i++){
+       $newsxz .= $feedjs['articles'][$i]['title'].'<br>'.$feedjs['articles'][$i]['description'].'<br>
+       <img src="'.$feedjs['articles'][$i]['urlToImage'].'"/><br>'.$feedjs['articles'][$i]['publishedAt'].'<br><a href="
+       '.$feedjs['articles'][$i]['url'].'">Click for more info</a><br><br>'; 
+}
+  
+   //checking the text recieved from the user and giving it an associated message
+   switch($newmessage) {
+        case "/start":
+           $botChat="Hey there! I'm Carsam :)\n Do you want to keep abreast with the lastest tech news?\n Type /get to get started.";
+           file_get_contents($website."/sendmessage?chat_id=".$chatId."&text=".urlencode($botChat));
+            break;
+           
+           
+        case "/get":
+           $link = 'https://newsapi.org/v1/articles?source=ars-technica&sortBy=top&apiKey=71742de1bb2b403f9d87d94444fd296d';
+           $feed = file_get_contents($link);
+           $feedjs = json_decode($feed,TRUE);
+           
+           for($i=1;$i<=5;$i++)
+           {
+                $newsx .= $feedjs['articles'][$i]['title']."\n"
+               .$feedjs['articles'][$i]['description']."\n"
+               .$feedjs['articles'][$i]['publishedAt']."\n"
+               .$feedjs['articles'][$i]['url']."\n\n\n"; 
+           }
+            $botChat=$newsx."Type /2 for more news\n";
+            file_get_contents($website."/sendmessage?chat_id=".$chatId."&text=".urlencode($botChat));
+            break;
+           
+           
+        case "/2":
+            $link = 'https://newsapi.org/v1/articles?source=techcrunch&sortBy=top&apiKey=71742de1bb2b403f9d87d94444fd296d';
+            $feed = file_get_contents($link);
+            $feedjs = json_decode($feed,TRUE);
+           
+            for($i=1;$i<=5;$i++)
+            {
+                $newsx .= $feedjs['articles'][$i]['title']."\n"
+               .$feedjs['articles'][$i]['description']."\n"
+               .$feedjs['articles'][$i]['publishedAt']."\n"
+               .$feedjs['articles'][$i]['url']."\n\n\n"; 
+            }
+           
+            $botChat=$newsx."Type /3 for more news\n";
+            file_get_contents($website."/sendmessage?chat_id=".$chatId."&text=".urlencode($botChat));
+            break;
+           
+           
+        case "/3":
+           $link = 'https://newsapi.org/v1/articles?source=techradar&sortBy=top&apiKey=71742de1bb2b403f9d87d94444fd296d';
+           $feed = file_get_contents($link);
+           $feedjs = json_decode($feed,TRUE);
+           
+           for($i=1;$i<=5;$i++)
+           {
+           $newsx .= $feedjs['articles'][$i]['title']."\n"
+           .$feedjs['articles'][$i]['description']."\n"
+           .$feedjs['articles'][$i]['publishedAt']."\n"
+           .$feedjs['articles'][$i]['url']."\n\n\n"; 
+           }
+            $botChat=$newsx."Type /3 for more news\n";
+            file_get_contents($website."/sendmessage?chat_id=".$chatId."&text=".urlencode($botChat));
+            break;
+           
+           //commands for the bot
+           case "/test":
+           $botChat="This bot is alive!";
+           file_get_contents($website."/sendmessage?chat_id=".$chatId."&text=".urlencode($botChat));
+            break;
+           
+           case "/description":
+           $botChat="This bot is keeps you abreast with the latest technews from around the world.\n 
+           It was created on 18th December, 2016 as a semster project by Samuel Gracious Etsiakoh and Mrs. Dorcas Mensah 
+           of Valley View University, Ghana, West Africa. The development was supervised by Mr. Joseph Abandoh-Sam of Valley View Universty as well.";
+           file_get_contents($website."/sendmessage?chat_id=".$chatId."&text=".urlencode($botChat));
+            break;
+           
+           case "/help":
+           $botChat="This bot can get you technews from across the globe. Simply send:\n\n /get - to get the news\n /2 - to get the more of news\n /3 - to get the more of news";
+           file_get_contents($website."/sendmessage?chat_id=".$chatId."&text=".urlencode($botChat));
+            break;
+    }
 
-One of the advisories describes three important flaws affecting VMware vCenter Server, vSphere Client and vRealize Automation. Researchers from Positive Technologies discovered XML External Entity (XXE) vulnerabilities that can lead to information disclosure and, in some cases, to a denial-of-service (DoS) condition.
-
-One issue is related to the single sign-on functionality, while another affects the Log Browser, the Distributed Switch setup and the Content Library. An attacker can exploit the flaws using specially crafted XML requests sent to the server.
-
-The third XXE bug impacts the vSphere Client and it can be exploited if the attacker can trick a legitimate user into connecting to a malicious vCenter Server or ESXi instance.
-
-The security holes, tracked as CVE-2016-7458, CVE-2016-7459 and CVE-2016-7460, have been patched with the release of vSphere Client 6.0 U2s and 5.5 U3e, vCenter Server 6.0 U2s and 5.5 U3e, and vRealize Automation 6.2.5. In the case of vSphere Client, VMware recommends uninstalling the application and reinstalling a patched version.
-
-The second advisory published this week by VMware describes CVE-2016-5334, a moderate-severity information disclosure flaw in Identity Manager and vRealize Automation. The vendor noted that the weakness, which is similar to a directory traversal, can allow an attacker to only access folders that don’t contain any sensitive data.
-
-The security holes have been fixed in Identity Manager 2.7.1 and vRealize Automation 7.2.0. vRealize Automation 7.x is affected by this bug as it includes an RPM-based version of Identity Manager.
-
-VMware also informed customers that it has updated two advisories, including the one covering the Linux kernel flaw known as Dirty COW.
-
-Earlier this month, white hat hackers who took part in the PwnFest competition in South Korea managed to find a critical VMware Workstation vulnerability that can be exploited from the guest to execute arbitrary code on the host operating system. The organizers awarded the researchers $150,000 for their guest-to-host escape. /next for another news");
-                           break;
-                           
-                       case "/next":
-                       # code...
-                       file_get_contents($website."/sendMessage?chat_id=".$chatId."&text=Organizations in Asia Targeted With InPage Zero-Day. Attacks launched recently against financial and government organizations in Asia leveraged a zero-day vulnerability in the InPage word processor, Kaspersky Lab reported on Wednesday. InPage is a word processor for languages such as Urdu, Persian, Pashto and Arabic. The product is widely used in Asia and some other parts of the world, including by media companies, academies, libraries, banks and government organizations. While analyzing a target that had been hit with various types of exploits, Kaspersky Lab researchers discovered an exploit file that had an InPage (.inp) extension. The file contained a shellcode that was triggered on several InPage versions. The shellcode decrypts itself and an EXE file embedded in the malicious document. 'InPage uses its own proprietary file format that is based on the Microsoft Compound File Format. The parser in the software’s main module ‘inpage.exe’ contains a vulnerability when parsing certain fields. By carefully setting such a field in the document, an attacker can control the instruction flow and achieve code execution,’ explained Kaspersky researcher Denis Legezo. In the attacks observed by the security firm, threat groups sent spear-phishing emails carrying the InPage exploit to various government and financial institutions in Asia and Africa, in countries such as Myanmar, Sri-Lanka and Uganda. Since the exploit has been leveraged to deliver various backdoors and keyloggers, researchers believe the zero-day has likely been used by multiple actors. Kaspersky said it had attempted to inform InPage about the zero-day, but without success. SecurityWeek has reached out to InPage developers and will update this article if they provide any information. While threat actors typically leverage vulnerabilities in software used worldwide (e.g. Microsoft Office), flaws in products such as InPage can also be highly useful for more localized and targeted attacks. Another example is the Hangul Word Processor (HWP), which is popular in South Korea. Last year, experts reported that a zero-day in HWP had been used in attacks launched by an actor believed to be associated with North Korea. However, unlike InPage, the developers of HWP seem to be more interested in security and they often release updates that patch vulnerabilities. /next2 for more news");
-                       break;
-
-                     default:
-                       # code...
-                       sendMessage($chatId, "default");
-                       break;
-                   }
-
-                   function sendMessage ($chatid, $message) {
-
-                     $url = $GLOBALS[website]."/sendMessage?chat_id=".$chatId."&text=".urlencode($message);
-                     file_get_contents($url);
-
-                   }
+ 
 ?>
+    
 
-<h2>Test</h2>
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+      
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="css/custom.css" rel="stylesheet" type="text/css">
+      
+    
+    
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+    
+  <body>
+      <header>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Carsam</a>
+          </div>
+    
+            
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                    <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Group<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header">Members</li>
+                         <li><a href="#">Samuel Gracious Etsiakoh</a></li>
+                         <li><a href="#">Dorcas Mensah</a></li>
+                        <li class="divider"></li>
+                    </ul>
+            
+                </ul>
+              </div>
+            </nav>
+        
+
+<div class="container">
+  <h2>Modal Login Example</h2>
+  <!-- Trigger the modal with a button -->
+  <button type="button" class="btn btn-default btn-lg" id="myBtn">Login</button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="padding:35px 50px;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4><span class="glyphicon glyphicon-lock"></span> Login</h4>
+        </div>
+        <div class="modal-body" style="padding:40px 50px;">
+          <form role="form">
+            <div class="form-group">
+              <label for="usrname"><span class="glyphicon glyphicon-user"></span> Username</label>
+              <input type="text" class="form-control" id="usrname" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+              <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
+              <input type="text" class="form-control" id="psw" placeholder="Enter password">
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" value="" checked>Remember me</label>
+            </div>
+              <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Login</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+          <p>Not a member? <a href="#">Sign Up</a></p>
+          <p>Forgot <a href="#">Password?</a></p>
+        </div>
+      </div>
+      
+    </div>
+  </div> 
+</div>
+ 
+<script>
+$(document).ready(function(){
+    $("#myBtn").click(function(){
+        $("#myModal").modal();
+    });
+});
+</script>
+
+        
+        
+    <div class="container">
+    <div class = "intro-message">
+             <h1>CarsamBot<br></h1>
+             <a class="btn btn-ghost" href = "#">Click to scroll up</a>
+            </div>
+    </div>
+        </header>
+          
+          
+        <div class="container-fluid">
+        <div class="jumbotron">
+            <h2>Hey there!</h2>
+                <p>We provide you with the latest technology news to your "door step".</p>
+        </div>
+        </div>
+          
+          
+        <div class="navbar navbar-transparent navbar-fixed-bottom" role="navigation">
+            <div class="container">
+                <div class="navbar-text pull-left"
+                <p>@CarsamBot 2016 .</p>
+            </div>
+        </div>
+      
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
